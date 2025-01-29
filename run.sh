@@ -1,0 +1,1 @@
+ansible-playbook -i inventory.yaml local_setup.yaml -K

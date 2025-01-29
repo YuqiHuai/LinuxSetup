@@ -1,0 +1,33 @@
+- name: Configure Local Machine
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Update package lists
+      apt:
+        update_cache: yes
+    
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+
+    - name: Install zsh and oh-my-zsh
+      script: scripts/zsh.sh
+
+    - name: Install Poetry
+      script: scripts/poetry.sh
+    
+    - name: Install Python 3.11
+      script: scripts/python3_11.sh
+    
+    - name: Install Zoxide
+      script: scripts/zoxide.sh
+    
+    - name: Install Neovim
+      script: scripts/neovim.sh
+
+    - name: Install Astrovim
+      script: scripts/astrovim.sh
+    
+    - name: Install Docker
+      script: scripts/docker.sh
