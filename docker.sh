@@ -1,3 +1,10 @@
+# exit if docker is already installed
+if command -v docker &> /dev/null
+then
+    echo "Docker is already installed"
+    exit
+fi
+
 echo "Uninstalling Docker..."
 echo "======================"
 sudo apt-get remove docker docker-engine docker.io containerd runc

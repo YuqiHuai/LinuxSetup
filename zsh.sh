@@ -1,3 +1,10 @@
+# exit if zsh is already installed
+if command -v zsh &> /dev/null
+then
+    echo "ZSH is already installed"
+    exit
+fi
+
 apt install zsh # Install ZSH
 chsh -s $(which zsh) # Change default shell to ZSH
 
