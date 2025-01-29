@@ -5,11 +5,13 @@ then
     exit
 fi
 
-apt install zsh # Install ZSH
+apt install zsh -y  # Install ZSH
 chsh -s $(which zsh) # Change default shell to ZSH
 
 # Install Oh My Zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    -s --batch
 
 # Install Powerlevel10k
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \

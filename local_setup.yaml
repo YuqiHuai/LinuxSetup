@@ -6,12 +6,15 @@
       apt:
         update_cache: yes
     
-    - name: Install Git
+    - name: Install apt packages
       apt:
         name:
           - git
           - curl
           - wget
+          - tar
+          - unzip
+          - software-properties-common
         state: present
 
     - name: ensure fonts directory
