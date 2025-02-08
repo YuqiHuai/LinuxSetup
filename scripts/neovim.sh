@@ -6,6 +6,6 @@ then
 fi
 
 curl -LO https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz
-rm -rf /opt/nvim
+rm -rf $HOME/.local/nvim
 tar -C /opt -xzf nvim-linux-x86_64.tar.gz
 echo 'export PATH="$PATH:/opt/nvim-linux-x86_64//bin"' >> ~/.zshrc
