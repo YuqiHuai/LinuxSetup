@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Fetching latest changes..."
+git fetch --prune
+
+echo "Deleting merged branches..."
+
+git branch --merged \
+| grep -v "\*" \
+| grep -v "main" \
+| grep -v "master" \
+| xargs -r git branch -d
+
+echo "Cleanup complete"

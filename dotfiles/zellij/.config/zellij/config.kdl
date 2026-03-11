@@ -1,0 +1,16 @@
+// Zellij configuration
+
+// Layout used when starting zellij
+default_layout "compact"
+
+// Enable mouse support
+mouse_mode true
+
+// Hide pane frames for cleaner UI
+pane_frames false
+
+// Default theme
+theme "default"
+
+// Copy automatically when selecting text
+copy_on_select true
