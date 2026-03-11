@@ -17,5 +17,7 @@ alias t="tmux"
 
 # Modern tools
 alias ls="eza --icons"
-alias cat="bat"
+alias cat="cat"
 alias zj="zellij"
+
+alias clip="xclip -sel clip"
