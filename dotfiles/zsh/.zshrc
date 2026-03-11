@@ -33,3 +33,4 @@ conda() {
 setopt autocd
 setopt interactivecomments
 setopt histignorealldups
+export PATH="$HOME/.local/bin:$PATH"

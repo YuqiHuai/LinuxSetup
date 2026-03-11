@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    RUNZSH=no sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+if ! command -v zsh >/dev/null; then
+    echo "Installing zsh..."
+    sudo apt-get install -y zsh
 fi
 
-if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
-    git clone --depth=1 \
-    https://github.com/romkatv/powerlevel10k.git \
-    ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+# Skip shell change inside containers
+if [ -f /.dockerenv ]; then
+    echo "Running inside container, skipping chsh"
+    exit 0
 fi
 
-chsh -s $(which zsh)
+# change default shell
+if [ "$SHELL" != "$(command -v zsh)" ]; then
+    chsh -s "$(command -v zsh)"
+fi

@@ -1,33 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "Installing base system packages..."
+# prevent interactive prompts (tzdata, locales, etc.)
+export DEBIAN_FRONTEND=noninteractive
 
-sudo apt update
+# default timezone for non-interactive installs
+export TZ=Etc/UTC
 
-sudo apt install -y \
-  build-essential \
-  curl \
-  wget \
-  git \
-  unzip \
-  ca-certificates \
-  software-properties-common \
-  gnupg \
-  stow \
-  zsh \
-  tmux \
-  ripgrep \
-  fd-find \
-  fzf \
-  bat \
-  tree \
-  htop \
-  jq \
-  xclip \
-  fontconfig \
-  nodejs \
-  npm \
-  luarocks
+echo "Updating apt repositories..."
+sudo apt-get update -y
 
-echo "System packages installed"
+echo "Installing base packages..."
+sudo apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    wget \
+    unzip \
+    ca-certificates \
+    software-properties-common \
+    gnupg \
+    lsb-release \
+    stow
+
+echo "Cleaning apt cache..."
+sudo apt-get autoremove -y
+sudo apt-get clean
