@@ -20,7 +20,7 @@ case "$ARCH" in
         ;;
 esac
 
-INSTALLER="$(mktemp)"
+INSTALLER="$(mktemp --suffix=.sh)"
 trap 'rm -f "$INSTALLER"' EXIT
 
 wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${MINICONDA_ARCH}.sh" -O "$INSTALLER"
