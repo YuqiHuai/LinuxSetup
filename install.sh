@@ -2,6 +2,60 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+INSTALL_DESKTOP=0
+
+usage() {
+  cat <<USAGE
+Usage: ./install.sh [--desktop]
+
+Options:
+  --desktop  Also run optional local workstation app installers from tools/desktop.
+  -h, --help Show this help message.
+USAGE
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    --desktop)
+      INSTALL_DESKTOP=1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $arg" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+run_scripts() {
+  local label="$1"
+  local dir="$2"
+  local skip="${3:-}"
+
+  echo
+  echo "Installing $label..."
+
+  if [ ! -d "$dir" ]; then
+    return
+  fi
+
+  shopt -s nullglob
+  local scripts=("$dir"/*.sh)
+  shopt -u nullglob
+
+  for script in "${scripts[@]}"; do
+    if [ -n "$skip" ] && [ "$(basename "$script")" = "$skip" ]; then
+      continue
+    fi
+
+    echo "Running $(basename "$script")"
+    bash "$script"
+  done
+}
 
 echo "================================"
 echo "Linux Setup Bootstrap Starting"
@@ -12,19 +66,12 @@ echo "================================"
 # ------------------------------------------------
 echo
 echo "Installing base packages..."
-bash "$ROOT/packages.sh"
+bash "$ROOT/tools/core/packages.sh"
 
 # ------------------------------------------------
 # System tools
 # ------------------------------------------------
-echo
-echo "Installing system tools..."
-if [ -d "$ROOT/tools/system" ]; then
-  for script in "$ROOT/tools/system/"*.sh; do
-    echo "Running $(basename "$script")"
-    bash "$script"
-  done
-fi
+run_scripts "system tools" "$ROOT/tools/system"
 
 # ------------------------------------------------
 # Shell tools
@@ -38,36 +85,17 @@ if [ -f "$ROOT/tools/shell/zsh.sh" ]; then
   bash "$ROOT/tools/shell/zsh.sh"
 fi
 
-for script in "$ROOT/tools/shell/"*.sh; do
-  if [[ "$script" != "$ROOT/tools/shell/zsh.sh" ]]; then
-    echo "Running $(basename "$script")"
-    bash "$script"
-  fi
-done
+run_scripts "remaining shell tools" "$ROOT/tools/shell" "zsh.sh"
 
 # ------------------------------------------------
 # Languages
 # ------------------------------------------------
-echo
-echo "Installing language tools..."
-if [ -d "$ROOT/tools/languages" ]; then
-  for script in "$ROOT/tools/languages/"*.sh; do
-    echo "Running $(basename "$script")"
-    bash "$script"
-  done
-fi
+run_scripts "language tools" "$ROOT/tools/languages"
 
 # ------------------------------------------------
 # Editors
 # ------------------------------------------------
-echo
-echo "Installing editors..."
-if [ -d "$ROOT/tools/editors" ]; then
-  for script in "$ROOT/tools/editors/"*.sh; do
-    echo "Running $(basename "$script")"
-    bash "$script"
-  done
-fi
+run_scripts "editors" "$ROOT/tools/editors"
 
 # ------------------------------------------------
 # Fonts
@@ -79,6 +107,16 @@ if [ -d "$ROOT/tools/fonts" ]; then
     echo "Installing font $(basename "$font")"
     bash "$ROOT/tools/install_font.sh" "$font"
   done
+fi
+
+# ------------------------------------------------
+# Desktop apps
+# ------------------------------------------------
+if [ "$INSTALL_DESKTOP" -eq 1 ]; then
+  run_scripts "desktop apps" "$ROOT/tools/desktop"
+else
+  echo
+  echo "Skipping desktop apps. Run ./install.sh --desktop to include tools/desktop."
 fi
 
 # ------------------------------------------------
