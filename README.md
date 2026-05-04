@@ -30,4 +30,10 @@ Include optional desktop applications:
 ./install.sh --desktop
 ```
 
+Adopt existing dotfiles into this repo before restowing:
+
+```bash
+./install.sh --adopt-dotfiles
+```
+
 Desktop app installers are intentionally skipped by default so the same repo can be used on servers, containers, WSL, and local workstations.

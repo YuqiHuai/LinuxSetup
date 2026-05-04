@@ -25,8 +25,13 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 # Conda
 conda() {
   unset -f conda
-  source "$HOME/miniconda3/etc/profile.d/conda.sh"
-  conda "$@"
+  if [[ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]]; then
+    source "$HOME/miniconda3/etc/profile.d/conda.sh"
+    conda "$@"
+  else
+    echo "conda is not installed at $HOME/miniconda3" >&2
+    return 127
+  fi
 }
 
 # Better shell behavior

@@ -8,13 +8,28 @@ fi
 
 echo "Installing Zellij..."
 
-curl -L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz \
-  -o /tmp/zellij.tar.gz
+ARCH="$(uname -m)"
+case "$ARCH" in
+  x86_64)
+    ZELLIJ_TARGET="x86_64-unknown-linux-musl"
+    ;;
+  aarch64|arm64)
+    ZELLIJ_TARGET="aarch64-unknown-linux-musl"
+    ;;
+  *)
+    echo "Unsupported architecture for Zellij: $ARCH" >&2
+    exit 1
+    ;;
+esac
 
-tar -xzf /tmp/zellij.tar.gz -C /tmp
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
 
-sudo mv /tmp/zellij /usr/local/bin/zellij
+curl -fL "https://github.com/zellij-org/zellij/releases/latest/download/zellij-${ZELLIJ_TARGET}.tar.gz" \
+  -o "$TMP_DIR/zellij.tar.gz"
 
-rm /tmp/zellij.tar.gz
+tar -xzf "$TMP_DIR/zellij.tar.gz" -C "$TMP_DIR"
+
+sudo install "$TMP_DIR/zellij" /usr/local/bin/zellij
 
 echo "Zellij installed"

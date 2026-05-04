@@ -3,14 +3,16 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 INSTALL_DESKTOP=0
+ADOPT_DOTFILES=0
 
 usage() {
   cat <<USAGE
-Usage: ./install.sh [--desktop]
+Usage: ./install.sh [--desktop] [--adopt-dotfiles]
 
 Options:
-  --desktop  Also run optional local workstation app installers from tools/desktop.
-  -h, --help Show this help message.
+  --desktop         Also run optional local workstation app installers from tools/desktop.
+  --adopt-dotfiles  Adopt existing dotfiles into this repo before restowing.
+  -h, --help        Show this help message.
 USAGE
 }
 
@@ -18,6 +20,9 @@ for arg in "$@"; do
   case "$arg" in
     --desktop)
       INSTALL_DESKTOP=1
+      ;;
+    --adopt-dotfiles)
+      ADOPT_DOTFILES=1
       ;;
     -h|--help)
       usage
@@ -69,6 +74,13 @@ echo "Installing base packages..."
 bash "$ROOT/tools/core/packages.sh"
 
 # ------------------------------------------------
+# Personal bin scripts
+# ------------------------------------------------
+echo
+echo "Installing personal bin scripts..."
+bash "$ROOT/tools/install_bin.sh"
+
+# ------------------------------------------------
 # System tools
 # ------------------------------------------------
 run_scripts "system tools" "$ROOT/tools/system"
@@ -90,7 +102,16 @@ run_scripts "remaining shell tools" "$ROOT/tools/shell" "zsh.sh"
 # ------------------------------------------------
 # Languages
 # ------------------------------------------------
-run_scripts "language tools" "$ROOT/tools/languages"
+echo
+echo "Installing language tools..."
+
+# Ensure Python dependencies are available before Python-based installers.
+if [ -f "$ROOT/tools/languages/python.sh" ]; then
+  echo "Running python.sh"
+  bash "$ROOT/tools/languages/python.sh"
+fi
+
+run_scripts "remaining language tools" "$ROOT/tools/languages" "python.sh"
 
 # ------------------------------------------------
 # Editors
@@ -124,7 +145,11 @@ fi
 # ------------------------------------------------
 echo
 echo "Installing dotfiles..."
-bash "$ROOT/tools/install_dotfiles.sh"
+if [ "${ADOPT_DOTFILES:-0}" -eq 1 ]; then
+  bash "$ROOT/tools/install_dotfiles.sh" --adopt
+else
+  bash "$ROOT/tools/install_dotfiles.sh"
+fi
 
 # ------------------------------------------------
 # Finished

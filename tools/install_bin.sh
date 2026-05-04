@@ -5,9 +5,11 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 mkdir -p "$HOME/.local/bin"
 
+shopt -s nullglob
 for file in "$ROOT/bin/"*; do
     name=$(basename "$file")
     ln -sf "$file" "$HOME/.local/bin/$name"
 done
+shopt -u nullglob
 
 echo "Personal scripts installed"

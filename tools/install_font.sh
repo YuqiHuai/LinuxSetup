@@ -12,8 +12,9 @@ FONT_SCRIPT="$1"
 source "$FONT_SCRIPT"
 
 FONT_DIR="$HOME/.local/share/fonts"
-TMP_ZIP="/tmp/${FONT_NAME}.zip"
+TMP_ZIP="$(mktemp)"
 FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/${VERSION}/${FONT_NAME}.zip"
+trap 'rm -f "$TMP_ZIP"' EXIT
 
 echo "Installing ${FONT_NAME} Nerd Font..."
 
@@ -26,12 +27,10 @@ if fc-list | grep -qi "$FONT_NAME"; then
 fi
 
 echo "Downloading ${FONT_URL}"
-curl -L "$FONT_URL" -o "$TMP_ZIP"
+curl -fL "$FONT_URL" -o "$TMP_ZIP"
 
 echo "Extracting..."
 unzip -q "$TMP_ZIP" -d "$FONT_DIR"
-
-rm "$TMP_ZIP"
 
 echo "Refreshing font cache..."
 fc-cache -fv >/dev/null

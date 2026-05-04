@@ -18,6 +18,7 @@ sudo apt-get install -y \
     wget \
     unzip \
     ca-certificates \
+    fontconfig \
     gnupg \
     lsb-release \
     stow

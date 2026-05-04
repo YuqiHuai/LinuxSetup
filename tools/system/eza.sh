@@ -11,7 +11,7 @@ echo "Installing eza..."
 sudo mkdir -p /etc/apt/keyrings
 
 wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc \
-  | sudo gpg --dearmor -o /etc/apt/keyrings/eza.gpg
+  | sudo gpg --dearmor --yes -o /etc/apt/keyrings/eza.gpg
 
 echo "deb [signed-by=/etc/apt/keyrings/eza.gpg] \
 https://deb.gierens.de stable main" \
