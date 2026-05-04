@@ -26,7 +26,16 @@ if [ -f /.dockerenv ]; then
     exit 0
 fi
 
-# change default shell
-if [ "$SHELL" != "$(command -v zsh)" ]; then
-    chsh -s "$(command -v zsh)"
+# Change the default shell without prompting for the user's password.
+ZSH_PATH="$(command -v zsh)"
+CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+
+if [ "$CURRENT_SHELL" != "$ZSH_PATH" ]; then
+    if sudo -n true 2>/dev/null; then
+        sudo chsh -s "$ZSH_PATH" "$USER"
+    else
+        echo "Skipping default shell change because sudo requires a password."
+        echo "Run this later if you want zsh as your login shell:"
+        echo "  sudo chsh -s $ZSH_PATH $USER"
+    fi
 fi
