@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -d "$HOME/miniconda3" ]; then
+MINICONDA_DIR="$HOME/miniconda3"
+
+if [ -x "$MINICONDA_DIR/bin/conda" ]; then
     echo "Miniconda already installed"
     exit 0
+fi
+
+if [ -d "$MINICONDA_DIR" ]; then
+    backup="$MINICONDA_DIR.incomplete.$(date +%Y%m%d%H%M%S)"
+    echo "Moving incomplete Miniconda install to $backup"
+    mv "$MINICONDA_DIR" "$backup"
 fi
 
 ARCH="$(uname -m)"
@@ -25,7 +33,7 @@ trap 'rm -f "$INSTALLER"' EXIT
 
 wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${MINICONDA_ARCH}.sh" -O "$INSTALLER"
 
-bash "$INSTALLER" -b -p "$HOME/miniconda3"
+bash "$INSTALLER" -b -p "$MINICONDA_DIR"
 
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+eval "$("$MINICONDA_DIR/bin/conda" shell.bash hook)"
 conda init bash zsh

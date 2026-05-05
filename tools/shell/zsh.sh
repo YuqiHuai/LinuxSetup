@@ -6,7 +6,13 @@ if ! command -v zsh >/dev/null; then
     sudo apt-get install -y zsh
 fi
 
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
+if [ -d "$HOME/.oh-my-zsh" ] && [ ! -s "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+    backup="$HOME/.oh-my-zsh.incomplete.$(date +%Y%m%d%H%M%S)"
+    echo "Moving incomplete Oh My Zsh install to $backup"
+    mv "$HOME/.oh-my-zsh" "$backup"
+fi
+
+if [ ! -s "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
     echo "Installing Oh My Zsh..."
     export RUNZSH=no
     export CHSH=no
@@ -14,7 +20,13 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
+if [ -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] && [ ! -s "$HOME/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme" ]; then
+    backup="$HOME/.oh-my-zsh/custom/themes/powerlevel10k.incomplete.$(date +%Y%m%d%H%M%S)"
+    echo "Moving incomplete Powerlevel10k install to $backup"
+    mv "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" "$backup"
+fi
+
+if [ ! -s "$HOME/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme" ]; then
     echo "Installing Powerlevel10k..."
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
         "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"

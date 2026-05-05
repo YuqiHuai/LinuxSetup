@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export PATH="$HOME/.local/bin:$PATH"
+
 if command -v poetry >/dev/null; then
     echo "Poetry already installed"
 else
@@ -8,8 +10,10 @@ else
     curl -sSL https://install.python-poetry.org | python3 -
 fi
 
-# ensure poetry is in PATH for this session
-export PATH="$HOME/.local/bin:$PATH"
+if ! command -v poetry >/dev/null; then
+    echo "Poetry install did not create a usable poetry executable" >&2
+    exit 1
+fi
 
 echo "Configuring Poetry..."
 

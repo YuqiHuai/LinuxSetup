@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ADOPT=0
 BACKUP_SUFFIX="backup.$(date +%Y%m%d%H%M%S)"
+BACKUP_DIR="$HOME/.dotfiles-backup"
 
 usage() {
     cat <<USAGE
@@ -37,16 +38,17 @@ backup_conflicts() {
     local source_file
     local rel_path
     local target
-    local backup
+    local backup_dir
 
     while IFS= read -r -d '' source_file; do
         rel_path="${source_file#"$dir"/}"
         target="$HOME/$rel_path"
 
         if [ -e "$target" ] && [ ! -L "$target" ] && [ -f "$target" ]; then
-            backup="$target.$BACKUP_SUFFIX"
-            echo "Backing up existing $target to $backup"
-            mv "$target" "$backup"
+            backup_dir="$BACKUP_DIR/$BACKUP_SUFFIX/$(dirname "$rel_path")"
+            mkdir -p "$backup_dir"
+            echo "Backing up existing $target to $backup_dir/"
+            mv "$target" "$backup_dir/"
         fi
     done < <(find "$dir" -type f -print0)
 }
