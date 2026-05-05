@@ -4,13 +4,15 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 INSTALL_DESKTOP=0
 ADOPT_DOTFILES=0
+INSTALL_MODE="symlink"
 
 usage() {
   cat <<USAGE
-Usage: ./install.sh [--desktop] [--adopt-dotfiles]
+Usage: ./install.sh [--desktop] [--one-shot] [--adopt-dotfiles]
 
 Options:
   --desktop         Also run optional local workstation app installers from tools/desktop.
+  --one-shot        Copy dotfiles and bin scripts so this repo can be removed later.
   --adopt-dotfiles  Adopt existing dotfiles into this repo before restowing.
   -h, --help        Show this help message.
 USAGE
@@ -20,6 +22,9 @@ for arg in "$@"; do
   case "$arg" in
     --desktop)
       INSTALL_DESKTOP=1
+      ;;
+    --one-shot)
+      INSTALL_MODE="copy"
       ;;
     --adopt-dotfiles)
       ADOPT_DOTFILES=1
@@ -35,6 +40,11 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+if [ "$INSTALL_MODE" = "copy" ] && [ "$ADOPT_DOTFILES" -eq 1 ]; then
+  echo "--adopt-dotfiles cannot be combined with --one-shot" >&2
+  exit 1
+fi
 
 run_scripts() {
   local label="$1"
@@ -78,7 +88,7 @@ bash "$ROOT/tools/core/packages.sh"
 # ------------------------------------------------
 echo
 echo "Installing personal bin scripts..."
-bash "$ROOT/tools/install_bin.sh"
+bash "$ROOT/tools/install_bin.sh" "--mode=$INSTALL_MODE"
 
 # ------------------------------------------------
 # System tools
@@ -145,7 +155,9 @@ fi
 # ------------------------------------------------
 echo
 echo "Installing dotfiles..."
-if [ "${ADOPT_DOTFILES:-0}" -eq 1 ]; then
+if [ "$INSTALL_MODE" = "copy" ]; then
+  bash "$ROOT/tools/install_dotfiles.sh" --copy
+elif [ "${ADOPT_DOTFILES:-0}" -eq 1 ]; then
   bash "$ROOT/tools/install_dotfiles.sh" --adopt
 else
   bash "$ROOT/tools/install_dotfiles.sh"

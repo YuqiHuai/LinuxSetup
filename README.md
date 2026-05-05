@@ -13,8 +13,8 @@ Personal Linux bootstrap scripts organized by installation category.
 - `tools/editors/`: editor tooling
 - `tools/fonts/`: font installers
 - `tools/desktop/`: optional graphical workstation applications
-- `dotfiles/`: stow-managed dotfiles
-- `bin/`: personal scripts linked into `~/.local/bin`
+- `dotfiles/`: dotfiles installed by symlink or one-shot copy
+- `bin/`: personal scripts installed into `~/.local/bin`
 
 ## Usage
 
@@ -30,6 +30,12 @@ Include optional desktop applications:
 ./install.sh --desktop
 ```
 
+Install in one-shot mode so the cloned repo can be removed afterward:
+
+```bash
+./install.sh --one-shot
+```
+
 Adopt existing dotfiles into this repo before restowing:
 
 ```bash
@@ -37,3 +43,5 @@ Adopt existing dotfiles into this repo before restowing:
 ```
 
 Desktop app installers are intentionally skipped by default so the same repo can be used on servers, containers, WSL, and local workstations.
+
+By default, dotfiles are managed as symlinks back to this repo with GNU Stow. Keep the cloned repo around when using the default mode. Use `--one-shot` when you want dotfiles and personal scripts copied into place instead.
