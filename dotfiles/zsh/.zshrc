@@ -22,6 +22,10 @@ source $ZSH/oh-my-zsh.sh
 # Zoxide
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+
 # Conda
 conda() {
   unset -f conda
