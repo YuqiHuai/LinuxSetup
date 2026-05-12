@@ -38,6 +38,9 @@ conda() {
   fi
 }
 
+# Rust
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+
 # Better shell behavior
 setopt autocd
 setopt interactivecomments
